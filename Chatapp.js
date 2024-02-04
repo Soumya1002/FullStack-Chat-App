@@ -22,8 +22,10 @@ app.use(cors({
 app.use(bodyParser.json({extended:false}))
 
 const signupRoute = require('./Routes/signup-route')
+const loginRoute = require('./Routes/login-route')
 
 app.use(signupRoute)
+app.use(loginRoute)
 
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, `public/${req.url}`))
