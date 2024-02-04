@@ -13,24 +13,31 @@ const cors = require('cors')
 
 const app = express()
 
-app.use(cors({
-    origin: 'http://localhost:4000',
-    // origin: 'http://127.0.0.1:5500/'    
-    //origin: '*'
-}))
+// app.use(cors({
+//     origin: 'http://localhost:4000',
+//     // origin: 'http://127.0.0.1:5500/'    
+//     //origin: '*'
+// }))
+
+app.use(cors())
 
 app.use(bodyParser.json({extended:false}))
 
 const signupRoute = require('./Routes/signup-route')
 const loginRoute = require('./Routes/login-route')
+const chatRoute = require('./Routes/chat-route')
 
 app.use(signupRoute)
 app.use(loginRoute)
+app.use(chatRoute)
+
 
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, `public/${req.url}`))
 })
 
+User.hasMany(Chat)
+Chat.belongsTo(User)
 
 sequelize.sync()
 .then(() => {
