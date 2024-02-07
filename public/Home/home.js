@@ -1,44 +1,44 @@
 try{
 } catch(err){
-
+    
 }
-
 window.setInterval(async () => {
     try{
         const token = localStorage.getItem('GCtoken')
-
         const chatDisplayDiv = document.getElementById('chatwindow')
-
-
+        
         const response = await axios.get('http://localhost:4000/chat/getallchats', {
             headers: {'authorization': token}
         })
 
-        if(response.data.length === 0){
-            chatDisplayDiv.innerHTML = '<p class="card-text">No messages yet</p>'
-        } else{
-            chatDisplayDiv.innerHTML = ''
-            showMessages(response.data, chatDisplayDiv)
-        }
+        console.log(response)
+
+        showMessages(response.data, chatDisplayDiv)
 
     } catch(err){
         console.log(err)
     }
-}, 10000)
-
+}, 100000)
 window.addEventListener('DOMContentLoaded', async () => {
     try{
             const token = localStorage.getItem('GCtoken')
+            if(token === null){
+                window.location.href = '../Login/login.html'
+            }
+
             const chatDisplayDiv = document.getElementById('chatwindow')
-            chatDisplayDiv.innerHTML = ''
+
             const response = await axios.get('http://localhost:4000/chat/getallchats', {
                 headers: {'authorization': token}
             })
-            if(response.data.length === 0){
-                chatDisplayDiv.innerHTML = '<p class="card-text">No messages yet</p>'
-            } else{
-                showMessages(response.data, chatDisplayDiv)
-            }
+
+            // if(response.data.length === 0){
+            //     chatDisplayDiv.innerHTML = '<p class="card-text">No messages yet</p>'
+            // } else{
+            //     showMessages(response.data, chatDisplayDiv)
+            // }
+
+            showMessages(response.data, chatDisplayDiv)
 
     } catch(err){
         console.log(err)
@@ -47,12 +47,18 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function showMessages(data, chatDisplayDiv){
 
-    data.forEach(element => {
-        const p = document.createElement('p')
-        p.className = 'cart-text'
-        p.innerText = element.chat
-        chatDisplayDiv.appendChild(p)
-      })
+    if(data.length === 0){
+        chatDisplayDiv.innerHTML = '<p class="card-text">No messages yet</p>'
+
+    } else{
+        chatDisplayDiv.innerHTML = ''
+        data.forEach(element => {
+            const p = document.createElement('p')
+            p.className = 'cart-text'
+            p.innerText = `${element.User.name}: ${element.chat}`
+            chatDisplayDiv.appendChild(p)
+          })
+    }  
 }
 
 async function logOut(e){
@@ -75,7 +81,6 @@ async function sendMessage(e){
                 headers: {'authorization': token}
             })
         }
-
     } catch(err){
         console.log(err)
     }

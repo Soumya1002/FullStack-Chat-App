@@ -11,10 +11,7 @@ const Chat = sequelize.define('chats', {
     chat : { 
         type : Sequelize.STRING, 
         allowNull : false,
-    },
-    GroupId: {
-        type: Sequelize.INTEGER,
-    },
+    }
 })
 
 module.exports = Chat
