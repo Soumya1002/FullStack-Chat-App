@@ -1,13 +1,12 @@
 async function signup(e){
-
+    
     try{
         e.preventDefault()
-
         let name = document.getElementById('name').value
         let email = document.getElementById('email').value
         let password = document.getElementById('password').value
-
-
+    
+    
         const userDetails = {
             name,
             email,
@@ -15,8 +14,6 @@ async function signup(e){
         }
 
         const response = await axios.post('http://localhost:4000/user/signup', userDetails)
-
-        console.log(response)
 
         if(response.status === 201){
 
@@ -28,19 +25,14 @@ async function signup(e){
         else {
             throw new Error(response.data.message)
         }
-
     } catch(errMessage){
         console.log(errMessage)  
         displayMessage(errMessage, false)
     }
 }
-
 function displayMessage(msg, successOrFailure){
-
     const errorDiv = document.getElementById('message')
-
         errorDiv.innerHTML = ''
-
     if(successOrFailure){
         errorDiv.innerHTML +=  `<h2 style="text-align:center; color:green; margin-top:30px;">${msg}</h2>`
     } else{
