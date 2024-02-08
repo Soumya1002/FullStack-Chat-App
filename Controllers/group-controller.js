@@ -4,6 +4,7 @@ const Group = require('../Models/group-model')
 const UserToGroup = require('../Models/userToGroup-model')
 const sequelize = require('../util/database')
 const { Op } = require('sequelize')
+
 const addGroup = async (req, res, next) => {
     try{
         const t = await sequelize.transaction()
@@ -12,20 +13,22 @@ const addGroup = async (req, res, next) => {
         const grpDescription = req.body.groupDescription
     
         const dbResponse = await Group.create({GroupName: grpName, GroupDescription: grpDescription, CreatedBy: req.user.id}, { transaction: t })
-
+    
         console.log(dbResponse.GroupId)
-
+    
         await UserToGroup.create({UserId: req.user.id, groupGroupId: dbResponse.GroupId, admin: true}, { transaction: t }) 
 
 
         await t.commit()
-        res.status(200).json({result: 'success'})
+        res.status(200).json({result: 'Successfully added Group'})
+
     } catch(err){
         await t.rollback()
         console.log(err)
     }
     
 }
+
 
 const getGroups = async (req, res, next) => {
     try{
@@ -34,6 +37,7 @@ const getGroups = async (req, res, next) => {
             where: {UserId: req.user.id},
             attributes: ['groupGroupId'],
         })
+
         let groupIdList = []
         dbResponse.forEach(element => {
             groupIdList.push(element.groupGroupId)  
@@ -52,14 +56,14 @@ const getGroups = async (req, res, next) => {
                 },
                 attributes: ['GroupId', 'GroupName']
             })
-
+                                
             // console.log('sending group id and names>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', groupsIdsAndNamesList)
             res.status(200).json({message: 'success', groupsIdsAndNamesList: groupsIdsAndNamesList})
 
         } else{
             res.json({message: 'User not part of any groups yet', groupsIdsAndNamesList: []})
         }
-
+        
 
     } catch(err){
         console.log(err)
@@ -89,7 +93,7 @@ const getUsers = async (req, res, next) => {
         },
         attributes: ['id', 'name']
     })
-
+                        
     console.log('groupIdList>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', userIdsAndNamesList)
     res.status(200).json({message: 'success', userIdsAndNamesList: userIdsAndNamesList})
 
