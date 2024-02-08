@@ -91,6 +91,27 @@ const messageReceived = async (req, res, next) => {
     }
     
 }
+
+exports.uploadFile = async(req,res)=>{
+    try{
+        const fileName =new Date() + req.file.originalname
+        const mimeType = req.file.mimetype
+        const fileData = req.file.buffer
+        console.log('line 61')
+        const data = await uploadToS3(fileData , fileName)
+        const groupId = req.params.groupId;
+        const group = await Group.findByPk(groupId)
+        const user = await group.getUsers({ where: { id: req.user.id } })
+        const member = user[0].member
+
+        const message = await member.createMessage({message : data.Location , type : mimeType , groupId})
+        return res.json(message)
+    }catch(e){
+        console.log(e)
+        return res.status(500).json({ success: false, msg: "Internal server error" })
+
+    }
+}
 module.exports = {
     messageReceived,
     getAllChats
